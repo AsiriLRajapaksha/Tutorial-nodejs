@@ -13,13 +13,18 @@
        </li>
       </ul>
    <ul>
+       <li *ngIf="userIsAuthonticated">
+           <a routerLink="/scaned-image" mat-button routerLinkActive="mat-accent"> Scaned Image</a>
+        </li>
+   </ul>
+   <ul>
        <li *ngIf="!userIsAuthonticated">
           <a routerLink="/signup" mat-button routerLinkActive="mat-accent"> Signup</a>
        </li>
    </ul>
    <ul>
        <li *ngIf="userIsAuthonticated">
-         <button mat-button> SignOut</button>
+         <button mat-button (click)="onLogout()"> SignOut</button>
        </li>
    </ul>
 </mat-toolbar>

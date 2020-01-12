@@ -11,6 +11,7 @@ export class PostService{
     
   private posts: Post[] = [];
   private postsUpdated = new Subject<{posts :Post[] , postsCount : number}>();
+  private textId : string ;
 
   constructor(private http: HttpClient , private router:Router) {}
 
@@ -30,7 +31,7 @@ export class PostService{
         }),
         maxPosts : postData.maxPosts
       }
-      }))
+      })) 
       .subscribe( (transformedPostsData ) =>{
         this.posts = transformedPostsData.posts;
         this.postsUpdated.next({posts :[...this.posts] , postsCount: transformedPostsData.maxPosts});
@@ -54,6 +55,25 @@ export class PostService{
       .subscribe(resposeData => {
         this.router.navigate(["/"]);
       });
+  }
+
+  readImage(image:File){
+    const postData = new FormData();
+    postData.append('image', image);
+    this.http.post<{textId:string}>("http://localhost:3000/api/posts/upload" , postData)
+    .subscribe(response => {
+      this.textId = response.textId;
+      console.log("text : "+ response.textId);
+    })
+  }
+
+  getText(){
+    const textId = this.textId;
+    console.log("text : "+ textId);
+    this.http.get<{text:string}>("http://localhost:3000/api/posts/" +  textId)
+    .subscribe(response => {
+      console.log(response.text);
+    });
   }
 
   updatePost(postId: string , title: string, content: string , image : File | string ){

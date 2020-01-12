@@ -42,7 +42,7 @@ router.post('/login' , (request , response , next) => {
       fetchUser = user;
       return bcrypt.compare(request.body.password , user.password);
     })
-    .then(result => {
+    .then(result => { 
       if(!result){
         return response.status(401).send({
           message: "Auth failed"

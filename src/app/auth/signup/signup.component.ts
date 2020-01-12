@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { NgForOf } from '@angular/common';
 import { NgForm } from '@angular/forms';
 import { AuthService } from '../auth.service';
 
@@ -11,7 +10,7 @@ import { AuthService } from '../auth.service';
 export class SignupComponent implements OnInit {
 
   constructor(public authService : AuthService) { }
-
+  isLoading = false;
   ngOnInit() {
   }
 
@@ -19,6 +18,7 @@ export class SignupComponent implements OnInit {
     if(form.invalid){
       return;
     }
+    this.isLoading = true;
     this.authService.createUser(form.value.email ,form.value.password);
   }
 

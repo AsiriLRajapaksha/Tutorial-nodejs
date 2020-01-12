@@ -22,6 +22,7 @@ import {
   MatProgressSpinnerModule,
   MatPaginatorModule
 } from "@angular/material";
+import { ScanedImageComponent } from './scaned-image/scaned-image.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import {
     PostListComponent,
     PostCreateComponent,
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    ScanedImageComponent
   ],
   imports: [
     BrowserModule,

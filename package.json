@@ -23,6 +23,7 @@
     "@angular/platform-browser-dynamic": "~8.2.11",
     "@angular/router": "~8.2.11",
     "bcrypt": "^3.0.7",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
     "hammerjs": "^2.0.8",
@@ -35,7 +36,8 @@
     "node-tesseract-ocr": "^1.0.0",
     "rxjs": "~6.4.0",
     "tesseract-ocr": "^1.0.0",
-    "tesseract.js": "^2.0.0",
+    "tesseract.js": "^2.0.0-alpha.13",
+    "tesseract.js-core": "^2.0.0-beta.11",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"
   },
