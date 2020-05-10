@@ -40,49 +40,49 @@ const storage = multer.diskStorage({// multer is used to extract incomming files
 const upload = multer({storage : storage}).single("image");
 
 /*--------------------------GET----------------------------------*/
-// router.get("" , (request ,response) => {
-//     const pageSize = +request.query.pagesize;
-//     const currentPage = +request.query.page;
-//     let fetchedPost ;
-//     const postQuery = Post.find();
-//     if(pageSize && currentPage ){
-//         postQuery
-//             .skip(pageSize*(currentPage - 1))
-//             .limit(pageSize);
-//     }
-//     postQuery.then( documents => {
-//         fetchedPost = documents;
-//         return Post.count();
-//     })
-//     .then( count => {
-//         response.status(200).send({
-//             message: "Posts fetched succesfully!",
-//             posts: fetchedPost,
-//             maxPosts: count
-//         });
-//     });
-// });
+router.get("" , (request ,response) => {
+    const pageSize = +request.query.pagesize;
+    const currentPage = +request.query.page;
+    let fetchedPost ;
+    const postQuery = Post.find();
+    if(pageSize && currentPage ){
+        postQuery
+            .skip(pageSize*(currentPage - 1))
+            .limit(pageSize);
+    }
+    postQuery.then( documents => {
+        fetchedPost = documents;
+        return Post.count();
+    })
+    .then( count => {
+        response.status(200).send({
+            message: "Posts fetched succesfully!",
+            posts: fetchedPost,
+            maxPosts: count
+        });
+    });
+});
 
-// router.get("/:id" , (request , response) => {
-//     Post.findById(request.params.id).then( post => {
-//         if(post){
-//             response.status(200).send(post);
-//         }else{
-//             response.status(404).send({message:'Not Found'});
-//         }
-//     });
-// });
-
-router.get("/:textId" , (request , response) => {
-    Text.findById(request.params.textId).then(text => {
-        if(text){
-            console.log("text : "+ text);
-            response.status(200).send(text);
+router.get("/:id" , (request , response) => {
+    Post.findById(request.params.id).then( post => {
+        if(post){
+            response.status(200).send(post);
         }else{
             response.status(404).send({message:'Not Found'});
         }
     });
 });
+
+// router.get("/:textId" , (request , response) => {
+//     Text.findById(request.params.textId).then(text => {
+//         if(text){
+//             console.log("text : "+ text);
+//             response.status(200).send(text);
+//         }else{
+//             response.status(404).send({message:'Not Found'});
+//         }
+//     });
+// });
 
 /*--------------------------POST----------------------------------*/
 router.post("" ,checkAuth ,multer({storage:storage}).single("image"), (request ,response ,next) => {
@@ -105,30 +105,30 @@ router.post("" ,checkAuth ,multer({storage:storage}).single("image"), (request ,
     });
 });
 
-router.post("/upload" ,checkAuth ,multer({storage:storage}).single("image"), (request ,response ,next) => {
-    upload(request, response, err => {
-        let text;
-        fs.readFile(`./backend/images/${request.file.filename}`, (err, data) => {
-          if (err) return console.log(`this is a error ${err.message}`);
-          worker
-            .recognize(data, "eng", { tessjs_create_pdf: "1" })
-            .progress(p => console.log(p))
-            .then( result => {
-                const text = new Text({
-                    text : result.text
-                });
-                console.log(text);
-                this.text = text;
-                text.save();
-                response.send({
-                    textId : text._id
-                })
-                next();
-            })
-            .finally(() => worker.terminate());
-        });
-      });
-  });
+// router.post("/upload" ,checkAuth ,multer({storage:storage}).single("image"), (request ,response ,next) => {
+//     upload(request, response, err => {
+//         let text;
+//         fs.readFile(`./backend/images/${request.file.filename}`, (err, data) => {
+//           if (err) return console.log(`this is a error ${err.message}`);
+//           worker
+//             .recognize(data, "eng", { tessjs_create_pdf: "1" })
+//             .progress(p => console.log(p))
+//             .then( result => {
+//                 const text = new Text({
+//                     text : result.text
+//                 });
+//                 console.log(text);
+//                 this.text = text;
+//                 text.save();
+//                 response.send({
+//                     textId : text._id
+//                 })
+//                 next();
+//             })
+//             .finally(() => worker.terminate());
+//         });
+//       });
+//   });
 
 router.put("/:id", checkAuth ,multer({storage:storage}).single("image"), (request ,response) => {
     // console.log(request.file);

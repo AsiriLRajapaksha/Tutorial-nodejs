@@ -30,9 +30,9 @@ router.post('/signup' , (request , response , next ) => {
       });
 });
 
-router.post('/login' , (request , response , next) => {
+router.post('/login' , async (request , response , next) => {
   let fetchUser;
-  User.findOne({email:request.body.email})
+  await User.findOne({email:request.body.email})
     .then(user => {
       if(!user){
         return response.status(401).send({
