@@ -14,6 +14,7 @@ export class PostListComponent implements OnInit , OnDestroy {
 
   posts: Post[] = [];
   isLoading = false;
+  userId:string;
   totalPosts = 0;
   postsPerPage = 2;
   currentPage = 1;
@@ -27,6 +28,7 @@ export class PostListComponent implements OnInit , OnDestroy {
   ngOnInit() {
     this.isLoading = true;
     this.postService.getPosts(this.postsPerPage , this.currentPage);
+    this.userId = this.authService.getUserId();
     this.postSub = this.postService.getPostUpdateListner()
       .subscribe( (postData : {posts : Post[] , postsCount : number} ) => {
         this.isLoading = false;
@@ -35,29 +37,34 @@ export class PostListComponent implements OnInit , OnDestroy {
       });
     this.userAuthonticated = this.authService.getIsAuth();
     this.authServiceSubscribe = this.authService.getAuthStatusListner()
-      .subscribe(
-        isAuthonticated => {
+    .subscribe(
+      isAuthonticated => {
         this.userAuthonticated = isAuthonticated;
+        this.userId = this.authService.getUserId();
+        // we don't push current information from here , we just push new information
       }
-    );
-
+      );  
+    }
+    onPageChange(postsData : PageEvent){
+      this.currentPage = postsData.pageIndex + 1;
+      this.postsPerPage = postsData.pageSize;
+      this.postService.getPosts(this.postsPerPage , this.currentPage)
+    }
+    
+    onDelete(postId : string){
+      this.postService.postDelete(postId)
+      .subscribe(()=>{
+        this.postService.getPosts(this.postsPerPage , this.currentPage);
+      });
+    }
+    
+    ngOnDestroy() {
+      this.postSub.unsubscribe();
+      this.authServiceSubscribe.unsubscribe();
+    }
+    
   }
-  onPageChange(postsData : PageEvent){
-    this.currentPage = postsData.pageIndex + 1;
-    this.postsPerPage = postsData.pageSize;
-    this.postService.getPosts(this.postsPerPage , this.currentPage)
-  }
-
-  onDelete(postId : string){
-    this.postService.postDelete(postId)
-    .subscribe(()=>{
-      this.postService.getPosts(this.postsPerPage , this.currentPage);
-    });
-  }
-
-  ngOnDestroy() {
-    this.postSub.unsubscribe();
-    this.authServiceSubscribe.unsubscribe();
-  }
-
-}
+  
+  // ng onInit only run after we authonticated server , this means there is no new info after the post-list has been created
+  // that why this.authService.getAuthStatusListner() not work , after there is no new info
+  // after login component subscribe "this.authService.getAuthStatusListner()" , there is no new info again in this

@@ -42,7 +42,8 @@ export class PostCreateComponent implements OnInit {
                id: postsData._id , 
                title: postsData.title, 
                content : postsData.content ,
-               imagePath : postsData.imagePath 
+               imagePath : postsData.imagePath ,
+               creator : postsData.creator
             };
             this.form.setValue({
                title: this.post.title , 
@@ -75,8 +76,9 @@ export class PostCreateComponent implements OnInit {
     }
     this.isLoading = true;
     if( this.mode === 'create'){
+      console.log("Send request");
       this.postService.addPost(this.form.value.title, this.form.value.content , this.form.value.image);
-      this.postService.readImage(this.form.value.image);
+      // this.postService.readImage(this.form.value.image);
     }else{
       this.postService.updatePost(this.postId , this.form.value.title, this.form.value.content , this.form.value.image);
     }

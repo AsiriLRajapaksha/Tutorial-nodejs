@@ -20,21 +20,29 @@ export class PostService{
     this.http.get<{message:string , posts:any , maxPosts: number }>(
       "http://localhost:3000/api/posts" + queryParams
       )
-      .pipe(map((postData) => {
-        return { posts : postData.posts.map( post => {
-          return {
-            title : post.title,
-            content : post.content,
-            id : post._id,
-            imagePath: post.imagePath
+      .pipe(
+        map(postData => {
+          return { 
+            posts : postData.posts.map( post => {
+              return {
+                title : post.title,
+                content : post.content,
+                id : post._id,
+                imagePath: post.imagePath,
+                creator: post.creator
+              };
+            }),
+            maxPosts : postData.maxPosts
           };
-        }),
-        maxPosts : postData.maxPosts
-      }
-      })) 
+        })
+      ) 
       .subscribe( (transformedPostsData ) =>{
+        console.log(transformedPostsData);
         this.posts = transformedPostsData.posts;
-        this.postsUpdated.next({posts :[...this.posts] , postsCount: transformedPostsData.maxPosts});
+        this.postsUpdated.next({
+          posts :[...this.posts] , 
+          postsCount: transformedPostsData.maxPosts
+        });
       });
   }
 
@@ -43,7 +51,7 @@ export class PostService{
   }
 
   getPost(id: string){
-     return this.http.get<{_id:string , title:string , content: string , imagePath: string}>("http://localhost:3000/api/posts/" + id);
+     return this.http.get<{_id:string , title:string , content: string , imagePath: string, creator: string}>("http://localhost:3000/api/posts/" + id);
   }
 
   addPost(title: string, content: string , image : File) {
@@ -57,15 +65,15 @@ export class PostService{
       });
   }
 
-  readImage(image:File){
-    const postData = new FormData();
-    postData.append('image', image);
-    this.http.post<{textId:string}>("http://localhost:3000/api/posts/upload" , postData)
-    .subscribe(response => {
-      this.textId = response.textId;
-      console.log("text : "+ response.textId);
-    })
-  }
+  // readImage(image:File){
+  //   const postData = new FormData();
+  //   postData.append('image', image);
+  //   this.http.post<{textId:string}>("http://localhost:3000/api/posts/upload" , postData)
+  //   .subscribe(response => {
+  //     this.textId = response.textId;
+  //     console.log("text : "+ response.textId);
+  //   })
+  // }
 
   getText(){
     const textId = this.textId;
@@ -80,6 +88,7 @@ export class PostService{
     let postData : Post | FormData;
     if(typeof(image) === 'object'){
       postData = new FormData();
+      postData.append('id',postId);
       postData.append('title' , title);
       postData.append('content', content);
       postData.append('image', image , title);
@@ -88,7 +97,8 @@ export class PostService{
         id: postId , 
         title : title , 
         content: content , 
-        imagePath : image
+        imagePath : image,
+        creator : null
       }
     }
 
